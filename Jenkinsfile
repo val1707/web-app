@@ -18,7 +18,7 @@ spec:
 
     stage('Build') {
       container('docker') {
-        dockerImage = docker.build("val717/k8s-app")
+        dockerImage = docker.build("val717/webapp")
       }
     }
     stage ('Push to repository') {
