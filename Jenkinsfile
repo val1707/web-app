@@ -28,7 +28,8 @@ spec:
         }
       }
     }
-
+  }
+}
 //     stage ('checkout') {
 //         checkout scm
 //     }
@@ -168,4 +169,4 @@ spec:
     
         // }
 
-  }
+//   }
