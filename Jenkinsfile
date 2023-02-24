@@ -1,58 +1,87 @@
-  node('master') {
-
-    stage ('checkout') {
-        checkout scm
+podTemplate(yaml: '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:dind
+    securityContext:
+      privileged: true
+    env:
+      - name: DOCKER_TLS_CERTDIR
+        value: ""
+''') {
+  node(POD_LABEL) {
+    stage('Clone repository') {
+      git branch: 'main', credentialsId: 'jenkins-pet', url: 'https://github.com/val1707/web-app.git'
     }
-    stage("first stage") {
-        sh 'ls -la'
+
+    stage('Build') {
+      container('docker') {
+        dockerImage = docker.build("val717/k8s-app")
+      }
     }
-    stage("Build"){
-       
-       
- sh "docker build -t wordpress:latest ."
-    }
-    stage("Check images"){
-        // sh "docker image ls"
-    }
-
-    stage("mysql"){
-        fullDockerImageName ="mysql"
-
-        containerID = sh(script: "docker ps --quiet --filter name=${fullDockerImageName}", returnStdout: true).trim()
-
-        if(!containerID) {
-            echo "running db container"
-            //sh "docker container stop ${fullDockerImageName}"
-
-            sh "docker container rm -f ${fullDockerImageName}"
-
-            sh "docker run -it -d --name ${fullDockerImageName} -e MYSQL_DATABASE=exampledb -e MYSQL_USER=exampleuser -e MYSQL_PASSWORD=examplepass -e MYSQL_RANDOM_ROOT_PASSWORD='1' -v db:/var/lib/mysql  mysql:5.7"
-        
-        } else {
-            echo "Container is already inplace"
+    stage ('Push to repository') {
+      container('docker') {
+        withDockerRegistry([ credentialsId: "docker-pass", url: "https://index.docker.io/v1/" ]) {
+          dockerImage.push("${env.BUILD_NUMBER}")
         }
+      }
     }
 
-    stage("wordpress"){
+//     stage ('checkout') {
+//         checkout scm
+//     }
+//     stage("first stage") {
+//         sh 'ls -la'
+//     }
+//     stage("Build"){
+       
+       
+//  sh "docker build -t wordpress:latest ."
+//     }
+//     stage("Check images"){
+//         // sh "docker image ls"
+//     }
 
-        wordpressDockerImageName = "wordpress"
+    // stage("mysql"){
+    //     fullDockerImageName ="mysql"
 
-        containerID = sh(script: "docker ps --quiet --filter name=${wordpressDockerImageName}", returnStdout: true).trim()
+    //     containerID = sh(script: "docker ps --quiet --filter name=${fullDockerImageName}", returnStdout: true).trim()
 
-        if (!containerID) {
+    //     if(!containerID) {
+    //         echo "running db container"
+    //         //sh "docker container stop ${fullDockerImageName}"
 
-        echo "running wordpress container"
-        //sh "docker container inspect 02805670e1a5"
-        sh "docker run -it -d -p 8083:80 --name=wordpress -e WORDPRESS_DB_HOST=172.17.0.2 -e  WORDPRESS_DB_USER=exampleuser -e WORDPRESS_DB_PASSWORD=examplepass -e WORDPRESS_DB_NAME=exampledb  wordpress:latest"
+    //         sh "docker container rm -f ${fullDockerImageName}"
+
+    //         sh "docker run -it -d --name ${fullDockerImageName} -e MYSQL_DATABASE=exampledb -e MYSQL_USER=exampleuser -e MYSQL_PASSWORD=examplepass -e MYSQL_RANDOM_ROOT_PASSWORD='1' -v db:/var/lib/mysql  mysql:5.7"
         
-     } else {
-        sh "docker container stop ${wordpressDockerImageName}"
+    //     } else {
+    //         echo "Container is already inplace"
+    //     }
+    // }
 
-        sh "docker rm -f ${wordpressDockerImageName}"
+    // stage("wordpress"){
 
-        sh "docker run -it -d -p 8083:80 --name=wordpress -e WORDPRESS_DB_HOST=172.17.0.2 -e  WORDPRESS_DB_USER=exampleuser -e WORDPRESS_DB_PASSWORD=examplepass -e WORDPRESS_DB_NAME=exampledb  wordpress:latest"
-     }
-    }
+    //     wordpressDockerImageName = "wordpress"
+
+    //     containerID = sh(script: "docker ps --quiet --filter name=${wordpressDockerImageName}", returnStdout: true).trim()
+
+    //     if (!containerID) {
+
+    //     echo "running wordpress container"
+    //     //sh "docker container inspect 02805670e1a5"
+    //     sh "docker run -it -d -p 8083:80 --name=wordpress -e WORDPRESS_DB_HOST=172.17.0.2 -e  WORDPRESS_DB_USER=exampleuser -e WORDPRESS_DB_PASSWORD=examplepass -e WORDPRESS_DB_NAME=exampledb  wordpress:latest"
+        
+    //  } else {
+    //     sh "docker container stop ${wordpressDockerImageName}"
+
+    //     sh "docker rm -f ${wordpressDockerImageName}"
+
+    //     sh "docker run -it -d -p 8083:80 --name=wordpress -e WORDPRESS_DB_HOST=172.17.0.2 -e  WORDPRESS_DB_USER=exampleuser -e WORDPRESS_DB_PASSWORD=examplepass -e WORDPRESS_DB_NAME=exampledb  wordpress:latest"
+    //  }
+    // }
 
 
 // Define your secret project token here
