@@ -3,6 +3,7 @@ FROM wordpress:6.0.2-apache
 # # DB_USER and DB_PASSWORD are included as an example. However,
 # # these should be removed and set during docker run.
 # #COPY . /usr/src/wordpress
+RUN echo "ServerName 192.168.1.53" >> /etc/apache2/apache2.conf
 COPY . /var/www/html
 # FROM wordpress:apache
 # WORKDIR /usr/src/wordpress
