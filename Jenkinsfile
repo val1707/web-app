@@ -18,8 +18,8 @@ spec:
 
     stage('Build') {
       container('docker') {
-        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-pet', url: 'https://github.com/val1707/web-app.git']])
-        sh '''VERSION=$(git log -1 --pretty=%h)
+        // checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-pet', url: 'https://github.com/val1707/web-app.git']])
+        // sh '''VERSION=$(git log -1 --pretty=%h)
         REPO="https://github.com/val1707/web-app.git:"
         TAG="$REPO$VERSION"
         LATEST="${REPO}latest"
