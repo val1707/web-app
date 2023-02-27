@@ -17,16 +17,6 @@ spec:
     }
 
     stage('Build') {
-      container('docker') {
-        // // checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'jenkins-pet', url: 'https://github.com/val1707/web-app.git']])
-        // sh '''VERSION=$(git log url: 'https://github.com/val1707/web-app.git' -1 --pretty=%h)
-        // REPO="https://github.com/val1707/web-app.git:"
-        // TAG="$REPO$VERSION"
-        // LATEST="${REPO}latest"
-        // BUILD_TIMESTAMP=$( date \'+%F_%H:%M:%S\' )
-        // docker build -t "$TAG" -t val717/webapp:"$LATEST" --build-arg VERSION="$VERSION" --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" . 
-        // docker push "$TAG" 
-        // docker push "$LATEST"'''
         dockerImage = docker.build("val717/webapp")
       }
     }
