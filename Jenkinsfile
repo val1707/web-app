@@ -1,4 +1,4 @@
-podTemplate(yaml: '''
+ppodTemplate(yaml: '''
 apiVersion: v1
 kind: Pod
 spec:
@@ -15,8 +15,8 @@ spec:
     stage('Clone repository') {
       git branch: 'main', credentialsId: 'jenkins-pet', url: 'https://github.com/val1707/web-app.git'
     }
-
     stage('Build') {
+      container('docker') {
         dockerImage = docker.build("val717/webapp")
       }
     }
@@ -27,11 +27,10 @@ spec:
         }
       }
     }
-   stage('Trigger ManifestUpdate') {
+    stage('Trigger ManifestUpdate') {
                 echo "triggering helmupdate"
                 build job: 'hemlupdate', parameters: [string(name: 'DOCKERTAG', value: 'BUILD_NUMBER')]
-   }
- }
-
-
-
+    }
+  }
+}
+ 
