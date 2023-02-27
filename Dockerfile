@@ -5,6 +5,12 @@ FROM wordpress:apache
 # # these should be removed and set during docker run.
 # #COPY . /usr/src/wordpress
 COPY . /var/www/html
+...
+ARG VERSION
+ENV VERSION $VERSION
+ARG BUILD_TIMESTAMP
+ENV BUILD_TIMESTAMP $BUILD_TIMESTAMP
+...
 # WORKDIR /usr/src/wordpress
 # RUN set -eux; \
 # 	find /etc/apache2 -name '*.conf' -type f -exec sed -ri -e "s!/var/www/html!$PWD!g" -e "s!Directory /var/www/!Directory $PWD!g" '{}' +; \
