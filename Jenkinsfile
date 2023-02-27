@@ -30,8 +30,8 @@ spec:
    stage('Trigger ManifestUpdate') {
                 echo "triggering helmupdate"
                 build job: 'hemlupdate', parameters: [string(name: 'DOCKERTAG', value: 'BUILD_NUMBER')]
-    }
-  }
-}
+   }
+ }
+
 
 
