@@ -1,11 +1,10 @@
-FROM wordpress:6.0.2-apache
+FROM wordpress:apache
+# FROM wordpress:6.0.2-apache
 # # Set environment variables used by the Wordpress image
 # # DB_USER and DB_PASSWORD are included as an example. However,
 # # these should be removed and set during docker run.
 # #COPY . /usr/src/wordpress
-RUN echo "ServerName 192.168.1.53" >> /etc/apache2/apache2.conf
 COPY . /var/www/html
-# FROM wordpress:apache
 # WORKDIR /usr/src/wordpress
 # RUN set -eux; \
 # 	find /etc/apache2 -name '*.conf' -type f -exec sed -ri -e "s!/var/www/html!$PWD!g" -e "s!Directory /var/www/!Directory $PWD!g" '{}' +; \
